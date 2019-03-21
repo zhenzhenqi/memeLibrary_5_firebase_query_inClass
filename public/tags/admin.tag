@@ -115,7 +115,7 @@
 
       //combine with additional functions to form complex queries
       if (fun == "nofun") {
-        queryResult = equalTo("0");
+        queryResult = queryResult.equalTo("0");
           console.log("queryResult for no fun", queryResult);
       } else if (fun == "veryfun") {
         queryResult = queryResult.equalTo("5");
