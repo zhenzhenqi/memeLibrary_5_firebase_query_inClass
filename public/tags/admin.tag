@@ -16,7 +16,6 @@
     </select>
   </div>
 
-
   <div show={ myMemes.length == 0 }>
     <p>NO MEMEs. Add a meme from above.</p>
   </div>
@@ -31,7 +30,6 @@
     var messagesRef = rootRef.child('/memes');
 
     this.myMemes = [];
-
 
     this.saveMeme = function () {
       var key = messagesRef.push().key;
@@ -49,12 +47,13 @@
       this.refs.funnyEl.value = "";
     }
 
+    //listen to database value change and update result
     messagesRef.on('value', function (snap) {
-      let datafromfb = snap.val();
-      console.log("datafromfb", datafromfb);
-      var tempData = [];
-      for (key in datafromfb){
-          tempData.push(datafromfb[key]);
+      let rawdata = snap.val();
+      console.log("rawdata", rawdata);
+      let tempData = [];
+      for (key in rawdata) {
+        tempData.push(rawdata[key]);
       }
       // console.log("myMemes", tag.myMemes);
       tag.myMemes = tempData;
@@ -63,38 +62,43 @@
       tag.update();
     });
 
-    getResults(event) {
-  console.log('getResults()');
-  var fun = this.refs.fun.value; // ""
+    filterResults(event) {
+      //get current filter value
+      var fun = this.refs.fun.value;
+      //order memes by child property funnees
+      let queryResult = messagesRef.orderByChild('funness');
 
-  if (fun=="nofun") {
-    messagesRef.orderByChild('funness').equalTo(0)
-    .once('value', function(snap) {
-      var data = snap.val();
-      var tempMemes = [];
-      for (var key in data) {
-        tempMemes.push(data[key]);
+      if (fun == "nofun") {
+      equalTo("0").once('value', function (snap) {
+          queryResult = queryResult.equalTo("0");
+          console.log("queryResult for no fun", queryResult);
+        })
+      } else if(fun =="veryfun"){
+          queryResult = queryResult.equalTo("5");
+          console.log("queryResult for very full", queryResult);
+        })
+      }else if(fun=="somewhatfun"){
+        queryResult = queryResult.startAt('1').endAt('4');
+          console.log("queryResult for some fun", queryResult);
+        })
+      }else{
+        //default, no query needed
       }
+      queryResult.once('value', function(snap){
+        let datafromfb = snap.val();
+        // console.log("datafromfb", datafromfb);
+        let tempData = [];
+        for (key in datafromfb) {
+          tempData.push(datafromfb[key]);
+        }
+        // console.log("myMemes", tag.myMemes);
+        tag.myMemes = tempData;
+        observable.trigger('updateMemes', tempData);
 
-      tag.myMemes = tempMemes;
-      tag.update();
-    });
-  } else {
-    candidatesRef.orderByChild('funnees').once('value', function(snap) {
-      var data = snap.val();
-      var tempMemes = [];
-      for (var key in data) {
-        tempMemes.push(data[key]);
+        tag.update();
       }
-
-      tag.myMemes = tempMemes;
-      tag.update();
-    });
-  }
-
-}
+    }
   </script>
-
 
   <style>
     :scope {
@@ -102,12 +106,11 @@
       padding: 2em;
     }
 
-    .memeMaker, .filter{
+    .filter,
+    .memeMaker {
       padding: 2em;
       margin-top: 2em;
       background-color: grey;
     }
-
-
   </style>
 </admin>

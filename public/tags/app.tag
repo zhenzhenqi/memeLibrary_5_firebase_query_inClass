@@ -23,8 +23,7 @@
 		//route function below gets triggered
 		//page variable updates
 		route(function(urlFragment) {
-			console.log(urlFragment);
-
+			// console.log(urlFragment);
 			that.page = urlFragment;
 			that.update();
 		});
