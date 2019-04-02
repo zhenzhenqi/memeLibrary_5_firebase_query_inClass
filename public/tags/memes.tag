@@ -5,10 +5,10 @@
     var tag = this;
     this.myMemes = [];
 
-    observable.on('updateMemes', function (passedData) {
-      tag.myMemes = passedData;
-      tag.update();
-    });
+    // observable.on('updateMemes', function (passedData) {
+    //   tag.myMemes = passedData;
+    //   tag.update();
+    // });
   </script>
 
   <style>

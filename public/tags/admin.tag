@@ -70,75 +70,63 @@
       tag.myMemes = tempData;
 
       tag.update();
-      observable.trigger('updateMemes', tempData);
+
     })
 
-    orderResults(event){
-      //get order value
+
+    orderResults(){
+      //1. get order value
       let order = this.refs.order.value;
       // console.log("order", order);
 
       let orderResult = messagesRef;
       console.log("messagesRef", messagesRef);
 
-      if (order == "funnees"){
-        orderResult = orderResult.orderByChild('funness');
-        console.log("order by funness", orderResult);
-      }else if(order == "caption"){
-        orderResult = orderResult.orderByChild('caption');
-      }else{
-        // default, nothing happens
-      }
+      // if order is selected as funnies, then order messages by child propoerty funness
+      // if order is selected as caption, then order messages by child propoerty caption
+      // if order is elected as default, no need to reorder at specifically
 
       orderResult.once('value', function (snap) {
         // let rawdata = snap.val();
         // console.log("datafromfb", datafromfb);
-        let tempData = [];
 
-        snap.forEach(function(child) {
-           tempData.push(child.val()); // NOW THE CHILDREN PRINT IN ORDER
-       });
+        //prepare an empty js array to store firebase data
 
-        tag.myMemes = tempData;
+        //get each child value of the the snapshot, and push child.val() into our temporary database
 
-        tag.update();
-        observable.trigger('updateMemes', tempData);
+        //update our tag's myMemes property with sorted firebase data
+
+        //calling our tag to manually update so that changes get reflected on the memes tab
+
+
       });
     }
 
     filterResults(event) {
       //get current filter value
-      var fun = this.refs.fun.value;
-      //order memes by child property funnees
-      let queryResult = messagesRef.orderByChild('funness');
-      console.log("queryResult", queryResult);
 
-      //combine with additional functions to form complex queries
-      if (fun == "nofun") {
-        queryResult = queryResult.equalTo("0");
-          console.log("queryResult for no fun", queryResult);
-      } else if (fun == "veryfun") {
-        queryResult = queryResult.equalTo("5");
-        console.log("queryResult for very full", queryResult);
-      } else if (fun == "somewhatfun") {
-        queryResult = queryResult.startAt('1').endAt('4');
-        console.log("queryResult for some fun", queryResult);
-      } else {
-        //default, no query needed
-      }
+      //order memes by child property funnees.
+
+      // console.log("queryResult", queryResult);
+
+      //further combine order result with additional functions to form complex queries
+      //if fun is selected as no fun, then only query for fun score equals to NUMBERX
+      //if fun is selected as very fun, then only query for fun score equals to NUMBERX
+      //if fun is selected as some fun, then only query for fun score equals to NUMBERX
+      //if fun is selected as default, then only query for fun score equals to NUMBERX
 
       queryResult.once('value', function (snap) {
-        let rawdata = snap.val();
+        //retrieve raw data from firebase
         // console.log("datafromfb", datafromfb);
-        let tempData = [];
-        for (key in rawdata) {
-          tempData.push(rawdata[key]);
-        }
-        // console.log("myMemes", tag.myMemes);
-        tag.myMemes = tempData;
 
-        tag.update();
-        observable.trigger('updateMemes', tempData);
+        //set up empty js array to prepare for array transfer
+
+        //use for loop to loop through raw data according to each key property and push into empty array
+
+        //update tag's data array to our temporary js array
+
+        //update tag value to be reflected on memes.tag page
+
       });
     }
   </script>
